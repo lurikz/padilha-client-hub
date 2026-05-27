@@ -19,8 +19,14 @@ const handleResponse = async (response: Response) => {
     return response.json();
   } else {
     const text = await response.text();
-    console.error("Non-JSON response received:", text);
-    throw new Error("O servidor retornou uma resposta inválida. Verifique se o backend está rodando na porta 3001.");
+    console.error("Non-JSON response received:", text.substring(0, 200));
+    
+    // Check if it's an HTML error page
+    if (text.includes("<!DOCTYPE") || text.includes("<html")) {
+       throw new Error(`Erro do Servidor: O backend retornou uma página HTML em vez de dados JSON. Isso geralmente significa que o servidor está fora do ar ou o caminho da API está incorreto. (Status: ${response.status})`);
+    }
+    
+    throw new Error(`O servidor retornou uma resposta inválida: ${text.substring(0, 100)}...`);
   }
 };
 
