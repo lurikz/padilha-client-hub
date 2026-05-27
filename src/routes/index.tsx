@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { api } from "@/lib/api";
 import { Plus, Search, User, LogOut, Phone, MapPin } from "lucide-react";
 import { toast } from "sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { ClientForm } from "@/components/ClientForm";
 
 export const Route = createFileRoute("/")({
   component: DashboardComponent,
@@ -14,6 +16,8 @@ function DashboardComponent() {
   const [clients, setClients] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,6 +41,24 @@ function DashboardComponent() {
       toast.error("Erro ao carregar clientes");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleCreateClient = async (data: any) => {
+    setIsSaving(true);
+    try {
+      const result = await api.post("/clients", data);
+      if (result.id) {
+        toast.success("Cliente cadastrado com sucesso!");
+        setIsDialogOpen(false);
+        fetchClients();
+      } else {
+        toast.error(result.error || "Erro ao cadastrar cliente");
+      }
+    } catch (error) {
+      toast.error("Erro de conexão");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -73,11 +95,12 @@ function DashboardComponent() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <Link to="/clients/new">
-            <Button className="h-12 w-12 p-0 rounded-full shadow-lg bg-black hover:bg-gray-800">
-              <Plus className="h-6 w-6 text-white" />
-            </Button>
-          </Link>
+          <Button 
+            onClick={() => setIsDialogOpen(true)}
+            className="h-12 w-12 p-0 rounded-full shadow-lg bg-black hover:bg-gray-800"
+          >
+            <Plus className="h-6 w-6 text-white" />
+          </Button>
         </div>
 
         <div className="space-y-3">
@@ -123,11 +146,28 @@ function DashboardComponent() {
       </main>
 
       {/* Floating Add Button for Mobile (Alternative) */}
-      <Link to="/clients/new" className="md:hidden fixed bottom-6 right-6">
-        <Button className="h-14 w-14 rounded-full shadow-2xl bg-black hover:bg-gray-800 p-0 flex items-center justify-center">
-          <Plus className="h-8 w-8 text-white" />
-        </Button>
-      </Link>
+      <Button 
+        onClick={() => setIsDialogOpen(true)}
+        className="md:hidden fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-2xl bg-black hover:bg-gray-800 p-0 flex items-center justify-center"
+      >
+        <Plus className="h-8 w-8 text-white" />
+      </Button>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-[95vw] sm:max-w-xl max-h-[90vh] overflow-y-auto rounded-2xl p-4">
+          <DialogHeader className="mb-4">
+            <DialogTitle>Novo Cliente</DialogTitle>
+            <DialogDescription>
+              Preencha os dados abaixo para cadastrar um novo cliente.
+            </DialogDescription>
+          </DialogHeader>
+          <ClientForm 
+            onSubmit={handleCreateClient} 
+            isLoading={isSaving} 
+            onCancel={() => setIsDialogOpen(false)} 
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
