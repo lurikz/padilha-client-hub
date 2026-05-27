@@ -1,28 +1,31 @@
 {
-  "name": "server",
-  "module": "src/index.ts",
+  "name": "padilha-tech-backend",
+  "version": "1.0.0",
+  "description": "Backend for Padilha Tech Assistência",
+  "main": "src/index.ts",
   "type": "module",
-  "private": true,
-  "devDependencies": {
-    "@types/bcryptjs": "^3.0.0",
-    "@types/bun": "latest",
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6",
-    "@types/jsonwebtoken": "^9.0.10",
-    "@types/pg": "^8.20.0",
-    "nodemon": "^3.1.14",
-    "ts-node": "^10.9.2"
-  },
-  "peerDependencies": {
-    "typescript": "^6.0.3"
+  "scripts": {
+    "dev": "nodemon --exec bun run src/index.ts",
+    "start": "bun run src/index.ts",
+    "build": "tsc"
   },
   "dependencies": {
-    "bcryptjs": "^3.0.3",
-    "cors": "^2.8.6",
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1",
-    "jsonwebtoken": "^9.0.3",
-    "pg": "^8.21.0",
-    "zod": "^4.4.3"
+    "bcryptjs": "3.0.3",
+    "cors": "2.8.6",
+    "dotenv": "17.4.2",
+    "express": "5.2.1",
+    "jsonwebtoken": "9.0.3",
+    "pg": "8.21.0",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "3.0.0",
+    "@types/cors": "2.8.19",
+    "@types/express": "5.0.6",
+    "@types/jsonwebtoken": "9.0.10",
+    "@types/pg": "8.20.0",
+    "nodemon": "3.1.14",
+    "ts-node": "10.9.2",
+    "typescript": "6.0.3"
   }
 }
