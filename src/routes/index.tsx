@@ -55,8 +55,9 @@ function DashboardComponent() {
       } else {
         toast.error(result.error || "Erro ao cadastrar cliente");
       }
-    } catch (error) {
-      toast.error("Erro de conexão");
+    } catch (error: any) {
+      console.error("Erro ao cadastrar cliente:", error);
+      toast.error(error.message || "Erro de conexão ao servidor");
     } finally {
       setIsSaving(false);
     }

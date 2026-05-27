@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' ? `${window.location.protocol}//${window.location.hostname}:3001/api` : 'http://localhost:3001/api');
+const API_URL = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' ? (window.location.port ? `${window.location.protocol}//${window.location.hostname}:3001/api` : '/api') : 'http://localhost:3001/api');
 
 const getHeaders = () => {
   const token = localStorage.getItem('token');
@@ -10,27 +10,37 @@ const getHeaders = () => {
 
 export const api = {
   async get(path: string) {
-    const response = await fetch(`${API_URL}${path}`, {
-      headers: getHeaders(),
-    });
-    if (response.status === 401) {
-      localStorage.removeItem('token');
-      window.location.href = '/login';
+    try {
+      const response = await fetch(`${API_URL}${path}`, {
+        headers: getHeaders(),
+      });
+      if (response.status === 401) {
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+      }
+      return response.json();
+    } catch (error) {
+      console.error(`GET ${path} failed:`, error);
+      throw error;
     }
-    return response.json();
   },
 
   async post(path: string, data: any) {
-    const response = await fetch(`${API_URL}${path}`, {
-      method: 'POST',
-      headers: getHeaders(),
-      body: JSON.stringify(data),
-    });
-    if (response.status === 401) {
-      localStorage.removeItem('token');
-      window.location.href = '/login';
+    try {
+      const response = await fetch(`${API_URL}${path}`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify(data),
+      });
+      if (response.status === 401) {
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+      }
+      return response.json();
+    } catch (error) {
+      console.error(`POST ${path} failed:`, error);
+      throw error;
     }
-    return response.json();
   },
 
   async put(path: string, data: any) {
