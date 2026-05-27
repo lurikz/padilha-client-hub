@@ -1,4 +1,4 @@
-const API_URL = '/api';
+const API_URL = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' ? (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? `http://${window.location.hostname}:3001/api` : '/api') : 'http://localhost:3001/api');
 
 const getHeaders = () => {
   const token = localStorage.getItem('token');
@@ -20,7 +20,7 @@ const handleResponse = async (response: Response) => {
   } else {
     const text = await response.text();
     console.error("Non-JSON response received:", text);
-    throw new Error("O servidor retornou uma resposta inválida. Verifique se o backend está rodando.");
+    throw new Error("O servidor retornou uma resposta inválida. Verifique se o backend está rodando na porta 3001.");
   }
 };
 
