@@ -27,6 +27,16 @@ function LoginComponent() {
     e.preventDefault();
     setIsLoading(true);
 
+    // Login local com credenciais fixas para facilitar o acesso imediato
+    if (username === "padilha" && password === "@Lpc040802") {
+      localStorage.setItem("token", "dummy-token-for-padilha");
+      localStorage.setItem("user", JSON.stringify({ username: "padilha" }));
+      toast.success("Login realizado com sucesso!");
+      navigate({ to: "/" });
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const data = await api.post("/auth/login", { username, password });
       
